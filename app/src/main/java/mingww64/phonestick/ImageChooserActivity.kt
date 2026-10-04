@@ -261,7 +261,7 @@ class ImageChooserActivity : AppCompatActivity() {
                     currentlySelectedPath = ""
                 }
                 loadImages()
-                val msg = if (isMountedImage) "Unmounted and removed ${file.name}" else "Removed ${file.name}"
+                val msg = if (isMountedImage) getString(R.string.snackbar_unmounted_removed, file.name) else getString(R.string.snackbar_removed, file.name)
                 Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
             }
         }
@@ -341,14 +341,14 @@ class ImageChooserActivity : AppCompatActivity() {
                     selectAndReturnFile(resolvedPath)
                 } else {
                     val errorMsg = when {
-                        !exists -> "Import failed: File does not exist"
-                        !isFile -> "Import failed: Selected path is not a regular file"
-                        length <= 0 -> "Import failed: Selected file is 0 bytes empty"
-                        !isValidExt -> "Import failed: File extension '.$ext' is not a supported disk image format (.img, .iso, .bin, .raw, .vhd, .qcow2)"
-                        else -> "Import failed: Invalid disk image file"
+                        !exists -> getString(R.string.import_failed_not_exist)
+                        !isFile -> getString(R.string.import_failed_not_file)
+                        length <= 0 -> getString(R.string.import_failed_empty)
+                        !isValidExt -> getString(R.string.import_failed_ext, ext)
+                        else -> getString(R.string.import_failed_invalid)
                     }
                     MaterialAlertDialogBuilder(this@ImageChooserActivity)
-                        .setTitle("Invalid Image File")
+                        .setTitle(R.string.dialog_invalid_image_title)
                         .setMessage(errorMsg)
                         .setPositiveButton(android.R.string.ok, null)
                         .show()
@@ -393,8 +393,8 @@ class ImageChooserActivity : AppCompatActivity() {
 
     private fun setupNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Image Creation"
-            val descriptionText = "Progress notifications for image creation"
+            val name = getString(R.string.notif_channel_name)
+            val descriptionText = getString(R.string.notif_channel_desc)
             val importance = NotificationManager.IMPORTANCE_LOW
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
@@ -426,20 +426,20 @@ class ImageChooserActivity : AppCompatActivity() {
             .setPriority(NotificationCompat.PRIORITY_LOW)
 
         if (isError) {
-            builder.setContentTitle("Failed to create image: $fileName")
+            builder.setContentTitle(getString(R.string.notif_failed_create, fileName))
                 .setContentText(errorMsg)
                 .setCategory(NotificationCompat.CATEGORY_STATUS)
                 .setOngoing(false)
                 .setProgress(0, 0, false)
         } else if (isDone) {
-            builder.setContentTitle("Image Created Successfully")
-                .setContentText("$fileName ($totalMb MB) created.")
+            builder.setContentTitle(getString(R.string.notif_created_title))
+                .setContentText(getString(R.string.notif_created_text, fileName, totalMb))
                 .setCategory(NotificationCompat.CATEGORY_STATUS)
                 .setOngoing(false)
                 .setProgress(0, 0, false)
         } else {
-            val contentText = if (writtenMb > 0 || totalMb > 0) "$writtenMb MB / $totalMb MB" else "Creating image..."
-            builder.setContentTitle("Creating Image: $fileName")
+            val contentText = if (writtenMb > 0 || totalMb > 0) getString(R.string.notif_progress_mb, writtenMb, totalMb) else getString(R.string.create_image_progress_init)
+            builder.setContentTitle(getString(R.string.notif_creating_title, fileName))
                 .setContentText(contentText)
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setProgress(100, percent, false)
@@ -508,7 +508,7 @@ class ImageChooserActivity : AppCompatActivity() {
             val sizeMb = sizeStr.toLongOrNull() ?: 1024L
 
             if (name.isEmpty()) {
-                dialogBinding.etImageName.error = "Name cannot be empty"
+                dialogBinding.etImageName.error = getString(R.string.create_image_name_empty)
                 return@setOnClickListener
             }
 
@@ -534,7 +534,7 @@ class ImageChooserActivity : AppCompatActivity() {
             dialogBinding.layoutProgress.visibility = View.VISIBLE
             dialogBinding.progressIndicatorDialog.isIndeterminate = false
             dialogBinding.progressIndicatorDialog.progress = 0
-            dialogBinding.tvProgressStatus.text = "Initializing image creation..."
+            dialogBinding.tvProgressStatus.text = getString(R.string.create_image_progress_init)
 
             val cleanName = if (name.endsWith(".img", ignoreCase = true) || name.endsWith(".iso", ignoreCase = true)) {
                 name
@@ -545,6 +545,7 @@ class ImageChooserActivity : AppCompatActivity() {
             showImageCreationNotification(cleanName, 0, 0, sizeMb)
 
             ImageCreator.createBlankImage(
+                context = this@ImageChooserActivity,
                 targetDirectory = filesDir,
                 fileName = name,
                 sizeInMB = sizeMb,
@@ -565,7 +566,7 @@ class ImageChooserActivity : AppCompatActivity() {
                     } else {
                         showImageCreationNotification(cleanName, 0, 0, sizeMb, isError = true, errorMsg = msg)
                         MaterialAlertDialogBuilder(this)
-                            .setTitle("Image Creation Error")
+                            .setTitle(R.string.dialog_image_error_title)
                             .setMessage(msg)
                             .setPositiveButton(android.R.string.ok, null)
                             .show()
@@ -580,8 +581,8 @@ class ImageChooserActivity : AppCompatActivity() {
     private fun showMultiFormatDialog() {
         if (imageFiles.isEmpty()) {
             MaterialAlertDialogBuilder(this)
-                .setTitle("No Image Files")
-                .setMessage("There are no image files available to format.")
+                .setTitle(R.string.dialog_no_images_title)
+                .setMessage(R.string.dialog_no_images_message)
                 .setPositiveButton(android.R.string.ok, null)
                 .show()
             return
@@ -601,7 +602,7 @@ class ImageChooserActivity : AppCompatActivity() {
         binding.speedDialContainer.visibility = View.GONE
 
         val initialCount = adapter.checkedFiles.size
-        binding.toolbar.title = if (initialCount > 0) "Selected $initialCount Image(s)" else "Select Image(s)"
+        binding.toolbar.title = if (initialCount > 0) getString(R.string.selection_title_selected, initialCount) else getString(R.string.selection_title_select)
         binding.toolbar.setNavigationIcon(R.drawable.ic_close_vector)
         binding.toolbar.setNavigationOnClickListener {
             exitFormatSelectionMode()
@@ -614,7 +615,7 @@ class ImageChooserActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.action_confirm_format -> {
                     if (selected.isEmpty()) {
-                        Snackbar.make(binding.root, "Select at least 1 image to format", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(binding.root, R.string.snackbar_select_one_format, Snackbar.LENGTH_SHORT).show()
                     } else {
                         showFormatSelectionDialog(selected)
                     }
@@ -622,7 +623,7 @@ class ImageChooserActivity : AppCompatActivity() {
                 }
                 R.id.action_confirm_delete -> {
                     if (selected.isEmpty()) {
-                        Snackbar.make(binding.root, "Select at least 1 image to delete", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(binding.root, R.string.snackbar_select_one_delete, Snackbar.LENGTH_SHORT).show()
                     } else {
                         confirmBatchDelete(selected)
                     }
@@ -633,16 +634,16 @@ class ImageChooserActivity : AppCompatActivity() {
         }
 
         adapter.onSelectionCountChanged = { count ->
-            binding.toolbar.title = if (count > 0) "Selected $count Image(s)" else "Select Image(s)"
+            binding.toolbar.title = if (count > 0) getString(R.string.selection_title_selected, count) else getString(R.string.selection_title_select)
         }
     }
 
     private fun confirmBatchDelete(selectedFiles: List<File>) {
         val count = selectedFiles.size
         MaterialAlertDialogBuilder(this)
-            .setTitle("Delete $count Image(s)")
-            .setMessage("Are you sure you want to delete $count selected image file(s)? This action cannot be undone.")
-            .setPositiveButton("Delete") { _, _ ->
+            .setTitle(getString(R.string.dialog_delete_title, count))
+            .setMessage(getString(R.string.dialog_delete_message, count))
+            .setPositiveButton(getString(R.string.action_delete)) { _, _ ->
                 executeBatchDelete(selectedFiles)
             }
             .setNegativeButton(R.string.cancel, null)
@@ -672,7 +673,7 @@ class ImageChooserActivity : AppCompatActivity() {
                 setLoading(false)
                 exitFormatSelectionMode()
                 loadImages()
-                Snackbar.make(binding.root, "Deleted ${selectedFiles.size} image file(s)", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, getString(R.string.snackbar_deleted_count, selectedFiles.size), Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -694,11 +695,11 @@ class ImageChooserActivity : AppCompatActivity() {
         var selectedFormatIndex = 0
 
         MaterialAlertDialogBuilder(this)
-            .setTitle("Choose Filesystem Format")
+            .setTitle(R.string.dialog_format_choose_title)
             .setSingleChoiceItems(formats, 0) { _, which ->
                 selectedFormatIndex = which
             }
-            .setPositiveButton("Format (${selectedFiles.size} file(s))") { _, _ ->
+            .setPositiveButton(getString(R.string.action_format_count, selectedFiles.size)) { _, _ ->
                 val format = formats[selectedFormatIndex]
                 executeBatchFormatting(selectedFiles, format)
             }
@@ -717,7 +718,7 @@ class ImageChooserActivity : AppCompatActivity() {
                     progressSnackbar?.dismiss()
                     progressSnackbar = Snackbar.make(
                         binding.root,
-                        "Formatting ${index + 1}/${selectedFiles.size}: ${file.name}...",
+                        getString(R.string.format_progress, index + 1, selectedFiles.size, file.name),
                         Snackbar.LENGTH_INDEFINITE
                     )
                     progressSnackbar?.show()
@@ -737,14 +738,14 @@ class ImageChooserActivity : AppCompatActivity() {
 
                 if (errors.isEmpty()) {
                     MaterialAlertDialogBuilder(this@ImageChooserActivity)
-                        .setTitle("Formatting Complete")
-                        .setMessage("Successfully formatted ${selectedFiles.size} file(s) as $format.")
+                        .setTitle(R.string.dialog_format_complete_title)
+                        .setMessage(getString(R.string.dialog_format_complete_message, selectedFiles.size, format))
                         .setPositiveButton(android.R.string.ok, null)
                         .show()
                 } else {
                     MaterialAlertDialogBuilder(this@ImageChooserActivity)
-                        .setTitle("Format CLI Errors")
-                        .setMessage("Completed with errors:\n\n" + errors.joinToString("\n\n"))
+                        .setTitle(R.string.dialog_format_errors_title)
+                        .setMessage(getString(R.string.dialog_format_errors_message, errors.joinToString("\n\n")))
                         .setPositiveButton(android.R.string.ok, null)
                         .show()
                 }
@@ -754,7 +755,7 @@ class ImageChooserActivity : AppCompatActivity() {
 
     private suspend fun suspendFormatImage(file: File, format: String): Pair<Boolean, String> =
         suspendCancellableCoroutine { continuation ->
-            ImageCreator.formatExistingImage(file, format, onProgressStatus = {}) { success, msg ->
+            ImageCreator.formatExistingImage(this@ImageChooserActivity, file, format, onProgressStatus = {}) { success, msg ->
                 if (continuation.isActive) {
                     continuation.resume(Pair(success, msg))
                 }

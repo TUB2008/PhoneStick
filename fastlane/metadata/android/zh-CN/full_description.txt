@@ -1,0 +1,8 @@
+PhoneStick 利用 Android 内核 ConfigFS 与 USB gadget 驱动，把已 Root 的 Android 设备变身为 USB 大容量存储磁盘或 CD-ROM 光驱。
+
+功能特性：
+* 将原始磁盘镜像（.img、.iso、.bin、.raw、.vhd、.qcow2）挂载为 USB 闪存盘或 CD-ROM
+* Material Design 3 界面，带动态展开的悬浮操作菜单
+* 对外置 SD 卡和「下载」目录中的镜像采用零拷贝的 SAF URI 路径解析
+* 支持只读模式与 CD-ROM 模拟模式
+* 即时校验 Linux 内核 LUN 状态

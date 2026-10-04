@@ -32,6 +32,12 @@ class ImageFilesAdapter(
     var onSelectionCountChanged: (Int) -> Unit = {}
     var onFileLongClick: ((File) -> Unit)? = null
 
+    private companion object {
+        const val MENU_MOUNT_NOW = 1
+        const val MENU_RENAME = 2
+        const val MENU_DELETE = 3
+    }
+
     inner class ViewHolder(val binding: ImageChooserRowBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -46,7 +52,7 @@ class ImageFilesAdapter(
         val context = holder.itemView.context
 
         holder.binding.filename.text = file.name
-        holder.binding.fileSize.text = formatFileSize(file.length())
+        holder.binding.fileSize.text = formatFileSize(context, file.length())
 
         if (file.extension.equals("iso", ignoreCase = true)) {
             holder.binding.ivFileIcon.setImageResource(R.drawable.ic_disc_vector)
@@ -101,21 +107,21 @@ class ImageFilesAdapter(
 
     private fun showPopupMenu(context: Context, anchorView: View, file: File) {
         val popup = PopupMenu(context, anchorView)
-        popup.menu.add("Mount Now")
-        popup.menu.add("Rename")
-        popup.menu.add("Delete")
+        popup.menu.add(0, MENU_MOUNT_NOW, 0, context.getString(R.string.action_mount_now))
+        popup.menu.add(0, MENU_RENAME, 1, context.getString(R.string.action_rename))
+        popup.menu.add(0, MENU_DELETE, 2, context.getString(R.string.action_delete))
 
         popup.setOnMenuItemClickListener { item ->
-            when (item.title) {
-                "Mount Now" -> {
+            when (item.itemId) {
+                MENU_MOUNT_NOW -> {
                     onFileMount(file)
                     true
                 }
-                "Rename" -> {
+                MENU_RENAME -> {
                     showRenameDialog(context, file)
                     true
                 }
-                "Delete" -> {
+                MENU_DELETE -> {
                     showDeleteDialog(context, file)
                     true
                 }
@@ -131,9 +137,9 @@ class ImageFilesAdapter(
         input.setSelection(file.name.lastIndexOf('.').let { if (it > 0) it else file.name.length })
 
         MaterialAlertDialogBuilder(context)
-            .setTitle("Rename Image")
+            .setTitle(context.getString(R.string.dialog_rename_title))
             .setView(input)
-            .setPositiveButton("Rename") { _, _ ->
+            .setPositiveButton(context.getString(R.string.action_rename)) { _, _ ->
                 val newName = input.text.toString().trim()
                 if (newName.isNotEmpty() && newName != file.name) {
                     val newFile = File(file.parentFile, newName)
@@ -142,40 +148,40 @@ class ImageFilesAdapter(
                     }
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel), null)
             .show()
     }
 
     private fun showDeleteDialog(context: Context, file: File) {
         val isSelected = file.absolutePath == selectedPath
         val msg = if (isSelected) {
-            "\"${file.name}\" is currently active. Deleting it will automatically unmount the USB drive and delete the file. Continue?"
+            context.getString(R.string.dialog_delete_active_message, file.name)
         } else {
-            "Are you sure you want to delete \"${file.name}\"?"
+            context.getString(R.string.dialog_delete_confirm_message, file.name)
         }
 
         MaterialAlertDialogBuilder(context)
-            .setTitle("Delete Image")
+            .setTitle(context.getString(R.string.dialog_delete_image_title))
             .setMessage(msg)
-            .setPositiveButton("Delete") { _, _ ->
+            .setPositiveButton(context.getString(R.string.action_delete)) { _, _ ->
                 onFileDeleted(file)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel), null)
             .show()
     }
 
     override fun getItemCount(): Int = files.size
 
-    private fun formatFileSize(sizeBytes: Long): String {
-        if (sizeBytes <= 0) return "0 B"
+    private fun formatFileSize(context: Context, sizeBytes: Long): String {
+        if (sizeBytes <= 0) return context.getString(R.string.size_zero)
         val kb = sizeBytes / 1024.0
         val mb = kb / 1024.0
         val gb = mb / 1024.0
         return when {
-            gb >= 1.0 -> String.format("%.2f GB", gb)
-            mb >= 1.0 -> String.format("%.2f MB", mb)
-            kb >= 1.0 -> String.format("%.2f KB", kb)
-            else -> "$sizeBytes B"
+            gb >= 1.0 -> context.getString(R.string.size_gb, gb)
+            mb >= 1.0 -> context.getString(R.string.size_mb, mb)
+            kb >= 1.0 -> context.getString(R.string.size_kb, kb)
+            else -> context.getString(R.string.size_bytes, sizeBytes)
         }
     }
 

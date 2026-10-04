@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PhoneStick</string>
+
+    <string name="licenses">许可证</string>
+    <string name="licenses_upstream">上游源码</string>
+
+    <string name="file_picker_nofile">未选择镜像</string>
+
+    <!-- MainActivity -->
+    <string name="status_title">USB 大容量存储状态</string>
+    <string name="status_mounted">已挂载</string>
+    <string name="status_unmounted">未挂载</string>
+    <string name="status_lun_path">LUN：%1$s</string>
+    <string name="status_lun_none">LUN：无</string>
+    <string name="status_active">已启用</string>
+    <string name="host_source_file">已选镜像</string>
+    <string name="host_ro">只读模式</string>
+    <string name="host_ro_summary">防止电脑修改磁盘镜像</string>
+    <string name="host_cdrom">CD-ROM 模拟</string>
+    <string name="host_cdrom_summary">模拟一台虚拟 CD-ROM 光驱</string>
+    <string name="host_serve">挂载 USB 磁盘</string>
+    <string name="host_disable">卸载 USB 磁盘</string>
+    <string name="host_select_image">选择磁盘镜像</string>
+    <string name="btn_select_image">选择镜像</string>
+    <string name="btn_create_image">创建空白磁盘镜像</string>
+    <string name="host_help">PhoneStick 可将本机模拟为 USB 大容量存储磁盘或虚拟 CD-ROM。请确保已授予 Root 权限，且内核支持相应功能。</string>
+
+    <!-- MainActivity dialogs -->
+    <string name="dialog_mount_error">挂载错误</string>
+    <string name="dialog_unmount_error">卸载错误</string>
+
+    <!-- SplashActivity -->
+    <string name="splash_subtitle">USB 大容量存储控制器</string>
+    <string name="splash_verifying_root">正在检查 Root 权限...</string>
+    <string name="root_required_title">需要 Root 权限</string>
+    <string name="root_required_desc">PhoneStick 需要 Root 权限（Magisk、KernelSU、APatch）才能写入 USB Gadget LUN 控制器并挂载磁盘镜像。</string>
+    <string name="root_grant_retry">授予 / 重新检查 Root</string>
+    <string name="action_exit">退出应用</string>
+
+    <!-- ImageChooserActivity & Dialogs -->
+    <string name="title_activity_image_chooser">选择或创建磁盘镜像</string>
+    <string name="image_chooser_filesize_mib">%1$.1f MiB</string>
+    <string name="image_chooser_add">导入镜像</string>
+    <string name="fab_create_blank">创建空白镜像</string>
+    <string name="action_format_images">格式化镜像</string>
+    <string name="menu_format">格式化</string>
+    <string name="menu_delete">删除</string>
+    <string name="create_image_dialog_title">创建空白磁盘镜像</string>
+    <string name="create_image_name_hint">镜像名称（例如 boot.img）</string>
+    <string name="create_image_size_hint">大小（MB，例如 512、1024、4096）</string>
+    <string name="create_image_size_preset_label">选择预设大小：</string>
+    <string name="create_image_fs_label">文件系统格式：</string>
+    <string name="create_image_fs_raw">原始空白（无文件系统）</string>
+    <string name="create_image_fast_alloc">快速分配（fallocate）</string>
+    <string name="create_image_progress_init">正在创建镜像...</string>
+    <string name="create_image_name_empty">名称不能为空</string>
+    <string name="create_image_confirm">创建镜像</string>
+    <string name="cancel">取消</string>
+
+    <!-- Image creation notifications -->
+    <string name="notif_channel_name">镜像创建</string>
+    <string name="notif_channel_desc">镜像创建的进度通知</string>
+    <string name="notif_failed_create">创建镜像失败：%1$s</string>
+    <string name="notif_created_title">镜像创建成功</string>
+    <string name="notif_created_text">%1$s（%2$d MB）已创建。</string>
+    <string name="notif_progress_mb">%1$d MB / %2$d MB</string>
+    <string name="notif_creating_title">正在创建镜像：%1$s</string>
+
+    <!-- ImageChooserActivity: import validation -->
+    <string name="import_failed_not_exist">导入失败：文件不存在</string>
+    <string name="import_failed_not_file">导入失败：所选路径不是普通文件</string>
+    <string name="import_failed_empty">导入失败：所选文件为 0 字节（空文件）</string>
+    <string name="import_failed_ext">导入失败：文件扩展名“%1$s”不是受支持的磁盘镜像格式（.img、.iso、.bin、.raw、.vhd、.qcow2）</string>
+    <string name="import_failed_invalid">导入失败：无效的磁盘镜像文件</string>
+    <string name="dialog_invalid_image_title">无效的镜像文件</string>
+    <string name="dialog_image_error_title">镜像创建错误</string>
+    <string name="dialog_no_images_title">没有镜像文件</string>
+    <string name="dialog_no_images_message">没有可用于格式化的镜像文件。</string>
+
+    <!-- Selection mode -->
+    <string name="selection_title_selected">已选择 %1$d 个镜像</string>
+    <string name="selection_title_select">选择镜像</string>
+
+    <!-- Batch format / delete -->
+    <string name="snackbar_select_one_format">请至少选择 1 个要格式化的镜像</string>
+    <string name="snackbar_select_one_delete">请至少选择 1 个要删除的镜像</string>
+    <string name="dialog_delete_title">删除 %1$d 个镜像</string>
+    <string name="dialog_delete_message">确定要删除所选的 %1$d 个镜像文件吗？此操作无法撤销。</string>
+    <string name="snackbar_deleted_count">已删除 %1$d 个镜像文件</string>
+    <string name="action_delete">删除</string>
+    <string name="dialog_format_choose_title">选择文件系统格式</string>
+    <string name="action_format_count">格式化（%1$d 个文件）</string>
+    <string name="format_progress">正在格式化 %1$d/%2$d：%3$s...</string>
+    <string name="dialog_format_complete_title">格式化完成</string>
+    <string name="dialog_format_complete_message">已将 %1$d 个文件成功格式化为 %2$s。</string>
+    <string name="dialog_format_errors_title">格式化命令错误</string>
+    <string name="dialog_format_errors_message">已完成，但存在错误：\n\n%1$s</string>
+
+    <!-- ImageFilesAdapter -->
+    <string name="dialog_rename_title">重命名镜像</string>
+    <string name="action_rename">重命名</string>
+    <string name="dialog_delete_image_title">删除镜像</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_file_icon">文件图标</string>
+    <string name="cd_more_options">更多选项</string>
+    <string name="cd_root_warning">Root 警告</string>
+    <string name="cd_create_blank">创建空白镜像</string>
+    <string name="cd_import_image">导入现有镜像</string>
+    <string name="cd_format_images">格式化镜像文件</string>
+    <string name="cd_add_actions">添加镜像操作</string>
+
+    <!-- Toast messages -->
+    <string name="host_success">设备现在应该会出现在你的电脑上</string>
+    <string name="host_disable_success">设备现在应该会从你的电脑上消失</string>
+    <string name="host_noroot">无法获取 Root 权限</string>
+    <string name="file_picker_denied">请授予存储权限，以便选择或保存文件</string>
+
+    <!-- ImageCreator: progress and results -->
+    <string name="create_image_already_exists">文件已存在：%1$s</string>
+    <string name="create_image_allocating">正在用 fallocate 分配文件...</string>
+    <string name="create_image_alloc_complete">快速分配完成</string>
+    <string name="create_image_dd_progress">正在创建镜像（dd）... %1$d MB / %2$d MB（%3$d%%）</string>
+    <string name="create_image_failed">创建镜像文件失败：%1$s</string>
+    <string name="create_image_formatting_fs">正在格式化文件系统（%1$s）...</string>
+    <string name="create_image_formatted_suffix"> 已格式化为 %1$s。</string>
+    <string name="create_image_format_warn"> （警告：mkfs %1$s 失败：%2$s）。</string>
+    <string name="create_image_complete">完成！</string>
+    <string name="create_image_success">镜像创建成功（%1$s）。%2$s</string>
+
+    <!-- Image formatting -->
+    <string name="format_progress_file">正在将 %1$s 格式化为 %2$s...</string>
+    <string name="format_exit_code">退出码 %1$d</string>
+    <string name="format_exit_code_lower">错误码 %1$d</string>
+    <string name="format_success_file">已将 %1$s 成功格式化为 %2$s</string>
+    <string name="format_failed_file">无法将 %1$s 格式化为 %2$s：%3$s</string>
+
+    <!-- Single-image delete and misc -->
+    <string name="snackbar_unmounted_removed">已卸载并删除 %1$s</string>
+    <string name="snackbar_removed">已删除 %1$s</string>
+    <string name="file_picker_unnamed">导入的文档</string>
+    <string name="status_lun_value_none">无</string>
+    <string name="file_size_and_path">%1$s • %2$s</string>
+
+    <!-- Overflow menu -->
+    <string name="action_mount_now">立即挂载</string>
+
+    <!-- Single-image delete dialog -->
+    <string name="dialog_delete_active_message">“%1$s”当前处于活动状态。删除它将自动卸载 USB 磁盘并删除该文件。是否继续？</string>
+    <string name="dialog_delete_confirm_message">确定要删除“%1$s”吗？</string>
+
+    <!-- File size units -->
+    <string name="size_zero">0 B</string>
+    <string name="size_bytes">%1$d B</string>
+    <string name="size_kb">%1$.2f KB</string>
+    <string name="size_mb">%1$.2f MB</string>
+    <string name="size_gb">%1$.2f GB</string>
+
+    <!-- UsbGadgetController: mount / unmount results -->
+    <string name="mount_error_no_root">Root 权限不可用</string>
+    <string name="mount_error_path_missing">镜像文件路径不存在：%1$s</string>
+    <string name="mount_success_sysfs">已通过 sys.usb.config 成功挂载（%1$s）</string>
+    <string name="mount_failed_kernel_rejected">挂载失败：LUN 已出现，但内核拒绝了该镜像路径。\n%1$s</string>
+    <string name="mount_error_no_configfs">此设备上未找到 ConfigFS</string>
+    <string name="mount_error_no_udc">未找到 USB 设备控制器（/sys/class/udc/ 中没有 UDC，且未设置 sys.usb.controller）</string>
+    <string name="mount_success_configfs">已通过 ConfigFS gadget 成功挂载（UDC：%1$s）</string>
+    <string name="mount_error_lun_binding">内核拒绝了 LUN 文件绑定</string>
+    <string name="mount_error_gadget">无法挂载 USB gadget：\n%1$s</string>
+    <string name="unmount_success">已成功卸载</string>
+    <string name="unmount_exit_code">退出码 %1$d</string>
+    <string name="unmount_failed">卸载失败（退出码 %1$d）：%2$s</string>
+</resources>

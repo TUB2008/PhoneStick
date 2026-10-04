@@ -1,5 +1,7 @@
 # PhoneStick 📱💾
 
+[简体中文](README.zh-CN.md)
+
 <p align="center">
   <img src="fastlane/metadata/android/en-US/images/icon.png" width="128" height="128" alt="PhoneStick Icon">
 </p>

@@ -128,7 +128,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     binding.tvStatusBadge.text = getString(R.string.status_unmounted)
                     binding.tvStatusBadge.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.status_unmounted))
-                    binding.tvLunInfo.text = getString(R.string.status_lun_path, "None")
+                    binding.tvLunInfo.text = getString(R.string.status_lun_path, getString(R.string.status_lun_value_none))
                 }
                 updateUi()
             }
@@ -145,14 +145,14 @@ class MainActivity : AppCompatActivity() {
                 if (rawName.contains(':')) {
                     rawName = rawName.substringAfterLast(':')
                 }
-                binding.tvSelectedFileName.text = if (rawName.isNotBlank()) rawName else "Imported Document"
+                binding.tvSelectedFileName.text = if (rawName.isNotBlank()) rawName else getString(R.string.file_picker_unnamed)
                 binding.tvSelectedPath.text = decoded
             } else {
                 val file = File(selectedImagePath)
                 if (file.exists()) {
                     binding.tvSelectedFileName.text = file.name
                     val sizeStr = formatFileSize(file.length())
-                    binding.tvSelectedPath.text = "$sizeStr • ${file.parent ?: ""}"
+                    binding.tvSelectedPath.text = getString(R.string.file_size_and_path, sizeStr, file.parent ?: "")
                 } else {
                     binding.tvSelectedFileName.text = getString(R.string.file_picker_nofile)
                     binding.tvSelectedPath.text = ""
@@ -197,7 +197,7 @@ class MainActivity : AppCompatActivity() {
                     Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
                 } else {
                     MaterialAlertDialogBuilder(this@MainActivity)
-                        .setTitle("Mount Error")
+                        .setTitle(R.string.dialog_mount_error)
                         .setMessage(message)
                         .setPositiveButton(android.R.string.ok, null)
                         .show()
@@ -218,7 +218,7 @@ class MainActivity : AppCompatActivity() {
                     Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
                 } else {
                     MaterialAlertDialogBuilder(this@MainActivity)
-                        .setTitle("Unmount Error")
+                        .setTitle(R.string.dialog_unmount_error)
                         .setMessage(message)
                         .setPositiveButton(android.R.string.ok, null)
                         .show()
@@ -249,15 +249,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun formatFileSize(sizeBytes: Long): String {
-        if (sizeBytes <= 0) return "0 B"
+        if (sizeBytes <= 0) return getString(R.string.size_zero)
         val kb = sizeBytes / 1024.0
         val mb = kb / 1024.0
         val gb = mb / 1024.0
         return when {
-            gb >= 1.0 -> String.format("%.2f GB", gb)
-            mb >= 1.0 -> String.format("%.2f MB", mb)
-            kb >= 1.0 -> String.format("%.2f KB", kb)
-            else -> "$sizeBytes B"
+            gb >= 1.0 -> getString(R.string.size_gb, gb)
+            mb >= 1.0 -> getString(R.string.size_mb, mb)
+            kb >= 1.0 -> getString(R.string.size_kb, kb)
+            else -> getString(R.string.size_bytes, sizeBytes)
         }
     }
 }

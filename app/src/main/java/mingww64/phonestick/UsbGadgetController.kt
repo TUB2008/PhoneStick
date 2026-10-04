@@ -67,7 +67,7 @@ object UsbGadgetController {
 
     fun mountImage(context: Context, pathOrUri: String, readOnly: Boolean, cdrom: Boolean): Pair<Boolean, String> {
         if (!isRootAvailable()) {
-            return Pair(false, "Root access not available")
+            return Pair(false, context.getString(R.string.mount_error_no_root))
         }
 
         var resolvedPath = pathOrUri
@@ -78,7 +78,7 @@ object UsbGadgetController {
         val escapedPath = resolvedPath.replace("'", "'\\''")
         val existsCmd = Shell.cmd("if [ -f '$escapedPath' ]; then echo EXISTS; fi").exec()
         if (!existsCmd.out.contains("EXISTS")) {
-            return Pair(false, "Image file path does not exist: $resolvedPath")
+            return Pair(false, context.getString(R.string.mount_error_path_missing, resolvedPath))
         }
 
         val roFlag = if (readOnly) "y" else "n"
@@ -147,10 +147,10 @@ object UsbGadgetController {
                 "if [ -n \"\$CHECK\" ]; then echo 'S1_SUCCESS'; else echo 'S1_FAILED'; fi"
             ).exec()
             if (writeRes.out.contains("S1_SUCCESS")) {
-                return Pair(true, "Successfully mounted via sys.usb.config ($foundLun)")
+                return Pair(true, context.getString(R.string.mount_success_sysfs, foundLun))
             }
             Log.w(TAG, "Strategy 1: LUN found but write failed: ${writeRes.err}")
-            return Pair(false, "Mount failed: LUN appeared but kernel rejected the image path.\n${writeRes.err.joinToString("\n")}")
+            return Pair(false, context.getString(R.string.mount_failed_kernel_rejected, writeRes.err.joinToString("\n")))
         }
 
         Log.w(TAG, "Strategy 1: no LUN appeared after setprop — init does not handle mass_storage on this device, trying ConfigFS gadget")
@@ -158,10 +158,10 @@ object UsbGadgetController {
 
         // --- Strategy 2: Create own 'swy' gadget in ConfigFS ---
         if (configFs.isEmpty()) {
-            return Pair(false, "ConfigFS not found on this device")
+            return Pair(false, context.getString(R.string.mount_error_no_configfs))
         }
         if (udcName.isEmpty()) {
-            return Pair(false, "USB Device Controller not found (no UDC in /sys/class/udc/ and sys.usb.controller is not set)")
+            return Pair(false, context.getString(R.string.mount_error_no_udc))
         }
 
         val configFsScript = arrayOf(
@@ -201,13 +201,13 @@ object UsbGadgetController {
         Log.d(TAG, "Strategy 2 (swy gadget) out=${result1.out} err=${result1.err}")
         if (result1.isSuccess && result1.out.contains("CONFIGFS_SUCCESS")) {
             saveAndEnableMassStorageConfig(context)
-            return Pair(true, "Successfully mounted via ConfigFS gadget (UDC: $udcName)")
+            return Pair(true, context.getString(R.string.mount_success_configfs, udcName))
         }
 
         val errReason = result1.err.joinToString("\n").ifEmpty {
-            result1.out.joinToString("\n").ifEmpty { "Kernel rejected LUN file binding" }
+            result1.out.joinToString("\n").ifEmpty { context.getString(R.string.mount_error_lun_binding) }
         }
-        return Pair(false, "Failed to mount USB gadget:\n$errReason")
+        return Pair(false, context.getString(R.string.mount_error_gadget, errReason))
     }
 
     /**
@@ -237,9 +237,9 @@ object UsbGadgetController {
         }
     }
 
-    fun unmountImage(context: Context? = null): Pair<Boolean, String> {
+    fun unmountImage(context: Context): Pair<Boolean, String> {
         if (!isRootAvailable()) {
-            return Pair(false, "Root access not available")
+            return Pair(false, context.getString(R.string.mount_error_no_root))
         }
 
         val configFs = getConfigFsPath()
@@ -263,19 +263,13 @@ object UsbGadgetController {
         }.toTypedArray()
 
         val result = Shell.cmd(*unmountScript).exec()
-        if (context != null) {
-            restoreOriginalUsbConfig(context)
-        } else {
-            val defConfig = Shell.cmd("getprop sys.usb.config").exec().out.firstOrNull() ?: "adb"
-            val restoredConfig = defConfig.replace("mass_storage,", "").replace(",mass_storage", "").replace("mass_storage", "none")
-            Shell.cmd("setprop sys.usb.config $restoredConfig").exec()
-        }
+        restoreOriginalUsbConfig(context)
 
         return if (result.isSuccess) {
-            Pair(true, "Unmounted successfully")
+            Pair(true, context.getString(R.string.unmount_success))
         } else {
-            val errText = result.err.joinToString("\n").ifEmpty { result.out.joinToString("\n").ifEmpty { "Exit code ${result.code}" } }
-            Pair(false, "Unmount failed (exit code ${result.code}): $errText")
+            val errText = result.err.joinToString("\n").ifEmpty { result.out.joinToString("\n").ifEmpty { context.getString(R.string.unmount_exit_code, result.code) } }
+            Pair(false, context.getString(R.string.unmount_failed, result.code, errText))
         }
     }
 

@@ -1,0 +1,1 @@
+把 Android 设备当作 USB 大容量存储磁盘或 CD-ROM 光驱使用。

@@ -1,5 +1,6 @@
 package mingww64.phonestick
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -11,6 +12,7 @@ object ImageCreator {
     private const val TAG = "ImageCreator"
 
     fun createBlankImage(
+        context: Context,
         targetDirectory: File,
         fileName: String,
         sizeInMB: Long,
@@ -32,7 +34,7 @@ object ImageCreator {
 
         val outputFile = File(targetDirectory, cleanName)
         if (outputFile.exists()) {
-            onComplete(false, "File already exists: ${outputFile.name}", null)
+            onComplete(false, context.getString(R.string.create_image_already_exists, outputFile.name), null)
             return
         }
 
@@ -44,7 +46,7 @@ object ImageCreator {
             // Try Fast Allocation (fallocate) if requested
             if (useFastAllocation) {
                 mainHandler.post {
-                    onProgressStatus("Allocating file with fallocate...", 10, 0, sizeInMB)
+                    onProgressStatus(context.getString(R.string.create_image_allocating), 10, 0, sizeInMB)
                 }
 
                 val fallocateCmd = "export PATH=\$PATH:/system/bin:/system/xbin:/vendor/bin; fallocate -l ${sizeInMB}M '$escapedPath'"
@@ -54,7 +56,7 @@ object ImageCreator {
                     Log.d(TAG, "fallocate succeeded for $escapedPath")
                     creationSuccess = true
                     mainHandler.post {
-                        onProgressStatus("Fast allocation complete", 90, sizeInMB, sizeInMB)
+                        onProgressStatus(context.getString(R.string.create_image_alloc_complete), 90, sizeInMB, sizeInMB)
                     }
                 } else {
                     Log.w(TAG, "fallocate failed or unsupported: ${fallocateRes.err.joinToString("\n")}. Falling back to dd.")
@@ -74,7 +76,7 @@ object ImageCreator {
                                 ((currentBytes.toDouble() / totalBytes) * 90).toInt().coerceIn(0, 90)
                             } else 0
                             mainHandler.post {
-                                onProgressStatus("Creating image (dd)... $writtenMb MB / $sizeInMB MB ($percent%)", percent, writtenMb, sizeInMB)
+                                onProgressStatus(context.getString(R.string.create_image_dd_progress, writtenMb, sizeInMB, percent), percent, writtenMb, sizeInMB)
                             }
                         }
                         try {
@@ -96,7 +98,7 @@ object ImageCreator {
                     Log.e(TAG, "dd creation failed: ${ddRes.err.joinToString("\n")}")
                     if (outputFile.exists()) outputFile.delete()
                     mainHandler.post {
-                        onComplete(false, "Failed to create image file: ${ddRes.err.joinToString("\n")}", null)
+                        onComplete(false, context.getString(R.string.create_image_failed, ddRes.err.joinToString("\n")), null)
                     }
                     return@thread
                 }
@@ -107,7 +109,7 @@ object ImageCreator {
             val fmt = filesystemFormat.uppercase()
             if (creationSuccess && fmt != "NONE" && fmt != "RAW BLANK (NO FS)") {
                 mainHandler.post {
-                    onProgressStatus("Formatting filesystem ($fmt)...", 95, sizeInMB, sizeInMB)
+                    onProgressStatus(context.getString(R.string.create_image_formatting_fs, fmt), 95, sizeInMB, sizeInMB)
                 }
 
                 val candidates = when (fmt) {
@@ -143,30 +145,31 @@ object ImageCreator {
                     val res = Shell.cmd(fullCmd).exec()
                     if (res.isSuccess) {
                         formatSuccess = true
-                        formatMsg = " Formatted as $fmt."
+                        formatMsg = context.getString(R.string.create_image_formatted_suffix, fmt)
                         Log.d(TAG, "Successfully formatted using: $cmdCandidate")
                         break
                     } else {
-                        lastError = res.err.joinToString("\n").ifEmpty { "code ${res.code}" }
+                        lastError = res.err.joinToString("\n").ifEmpty { context.getString(R.string.format_exit_code_lower, res.code) }
                         Log.w(TAG, "Format attempt ($cmdCandidate) failed: $lastError")
                     }
                 }
 
                 if (!formatSuccess && candidates.isNotEmpty()) {
                     Log.e(TAG, "All format candidates failed for $fmt. Last error: $lastError")
-                    formatMsg = " (Warning: mkfs $fmt failed: $lastError)."
+                    formatMsg = context.getString(R.string.create_image_format_warn, fmt, lastError)
                 }
             }
 
             mainHandler.post {
-                onProgressStatus("Complete!", 100, sizeInMB, sizeInMB)
+                onProgressStatus(context.getString(R.string.create_image_complete), 100, sizeInMB, sizeInMB)
                 Log.d(TAG, "Successfully created image at ${outputFile.absolutePath}")
-                onComplete(true, "Successfully created image (${outputFile.name}).$formatMsg", outputFile)
+                onComplete(true, context.getString(R.string.create_image_success, outputFile.name, formatMsg), outputFile)
             }
         }
     }
 
     fun formatExistingImage(
+        context: Context,
         file: File,
         filesystemFormat: String = "FAT32",
         onProgressStatus: (status: String) -> Unit = {},
@@ -177,7 +180,7 @@ object ImageCreator {
             val escapedPath = file.absolutePath.replace("'", "'\\''")
             val fmt = filesystemFormat.uppercase()
             mainHandler.post {
-                onProgressStatus("Formatting ${file.name} as $fmt...")
+                onProgressStatus(context.getString(R.string.format_progress_file, file.name, fmt))
             }
 
             val candidates = when (fmt) {
@@ -216,16 +219,16 @@ object ImageCreator {
                     Log.d(TAG, "Successfully formatted ${file.name} using: $cmdCandidate")
                     break
                 } else {
-                    lastError = res.err.joinToString("\n").ifEmpty { "Exit code ${res.code}" }
+                    lastError = res.err.joinToString("\n").ifEmpty { context.getString(R.string.format_exit_code, res.code) }
                     Log.w(TAG, "Format attempt ($cmdCandidate) failed: $lastError")
                 }
             }
 
             mainHandler.post {
                 if (formatSuccess) {
-                    onComplete(true, "Successfully formatted ${file.name} as $fmt")
+                    onComplete(true, context.getString(R.string.format_success_file, file.name, fmt))
                 } else {
-                    onComplete(false, "Failed to format ${file.name} as $fmt: $lastError")
+                    onComplete(false, context.getString(R.string.format_failed_file, file.name, fmt, lastError))
                 }
             }
         }

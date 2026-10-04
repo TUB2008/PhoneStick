@@ -11,6 +11,8 @@
     <string name="status_mounted">MOUNTED</string>
     <string name="status_unmounted">UNMOUNTED</string>
     <string name="status_lun_path">LUN: %1$s</string>
+    <string name="status_lun_none">LUN: None</string>
+    <string name="status_active">ACTIVE</string>
     <string name="host_source_file">Selected Image</string>
     <string name="host_ro">Read-only mode</string>
     <string name="host_ro_summary">Prevent host PC from modifying the disk image</string>
@@ -18,23 +20,153 @@
     <string name="host_cdrom_summary">Emulate a virtual CD-ROM drive</string>
     <string name="host_serve">Mount USB Drive</string>
     <string name="host_disable">Unmount USB Drive</string>
+    <string name="host_select_image">Select Disk Image</string>
     <string name="btn_select_image">Choose Image</string>
     <string name="btn_create_image">Create Blank Disk Image</string>
     <string name="host_help">PhoneStick emulates a USB mass storage drive or virtual CD-ROM. Ensure root permission is granted and a compatible kernel is available.</string>
+
+    <!-- MainActivity dialogs -->
+    <string name="dialog_mount_error">Mount Error</string>
+    <string name="dialog_unmount_error">Unmount Error</string>
+
+    <!-- SplashActivity -->
+    <string name="splash_subtitle">USB Mass Storage Controller</string>
+    <string name="splash_verifying_root">Verifying Root privileges...</string>
+    <string name="root_required_title">Root Access Required</string>
+    <string name="root_required_desc">PhoneStick requires Root access (Magisk, KernelSU, APatch) to write to USB Gadget LUN controllers and mount disk images.</string>
+    <string name="root_grant_retry">Grant / Retry Root Check</string>
+    <string name="action_exit">Exit Application</string>
 
     <!-- ImageChooserActivity & Dialogs -->
     <string name="title_activity_image_chooser">Select or Create Disk Image</string>
     <string name="image_chooser_filesize_mib">%1$.1f MiB</string>
     <string name="image_chooser_add">Import Image</string>
+    <string name="fab_create_blank">Create Blank Image</string>
+    <string name="action_format_images">Format Image(s)</string>
+    <string name="menu_format">Format</string>
+    <string name="menu_delete">Delete</string>
     <string name="create_image_dialog_title">Create Blank Disk Image</string>
     <string name="create_image_name_hint">Image Name (e.g. boot.img)</string>
     <string name="create_image_size_hint">Size in MB (e.g. 512, 1024, 4096)</string>
+    <string name="create_image_size_preset_label">Select Size Preset:</string>
+    <string name="create_image_fs_label">Filesystem Format:</string>
+    <string name="create_image_fs_raw">Raw Blank (No FS)</string>
+    <string name="create_image_fast_alloc">Fast Allocation (fallocate)</string>
+    <string name="create_image_progress_init">Creating image...</string>
+    <string name="create_image_name_empty">Name cannot be empty</string>
     <string name="create_image_confirm">Create Image</string>
     <string name="cancel">Cancel</string>
+
+    <!-- Image creation notifications -->
+    <string name="notif_channel_name">Image Creation</string>
+    <string name="notif_channel_desc">Progress notifications for image creation</string>
+    <string name="notif_failed_create">Failed to create image: %1$s</string>
+    <string name="notif_created_title">Image Created Successfully</string>
+    <string name="notif_created_text">%1$s (%2$d MB) created.</string>
+    <string name="notif_progress_mb">%1$d MB / %2$d MB</string>
+    <string name="notif_creating_title">Creating Image: %1$s</string>
+
+    <!-- ImageChooserActivity: import validation -->
+    <string name="import_failed_not_exist">Import failed: File does not exist</string>
+    <string name="import_failed_not_file">Import failed: Selected path is not a regular file</string>
+    <string name="import_failed_empty">Import failed: Selected file is 0 bytes empty</string>
+    <string name="import_failed_ext">Import failed: File extension \'%1$s\' is not a supported disk image format (.img, .iso, .bin, .raw, .vhd, .qcow2)</string>
+    <string name="import_failed_invalid">Import failed: Invalid disk image file</string>
+    <string name="dialog_invalid_image_title">Invalid Image File</string>
+    <string name="dialog_image_error_title">Image Creation Error</string>
+    <string name="dialog_no_images_title">No Image Files</string>
+    <string name="dialog_no_images_message">There are no image files available to format.</string>
+
+    <!-- Selection mode -->
+    <string name="selection_title_selected">Selected %1$d Image(s)</string>
+    <string name="selection_title_select">Select Image(s)</string>
+
+    <!-- Batch format / delete -->
+    <string name="snackbar_select_one_format">Select at least 1 image to format</string>
+    <string name="snackbar_select_one_delete">Select at least 1 image to delete</string>
+    <string name="dialog_delete_title">Delete %1$d Image(s)</string>
+    <string name="dialog_delete_message">Are you sure you want to delete %1$d selected image file(s)? This action cannot be undone.</string>
+    <string name="snackbar_deleted_count">Deleted %1$d image file(s)</string>
+    <string name="action_delete">Delete</string>
+    <string name="dialog_format_choose_title">Choose Filesystem Format</string>
+    <string name="action_format_count">Format (%1$d file(s))</string>
+    <string name="format_progress">Formatting %1$d/%2$d: %3$s...</string>
+    <string name="dialog_format_complete_title">Formatting Complete</string>
+    <string name="dialog_format_complete_message">Successfully formatted %1$d file(s) as %2$s.</string>
+    <string name="dialog_format_errors_title">Format CLI Errors</string>
+    <string name="dialog_format_errors_message">Completed with errors:\n\n%1$s</string>
+
+    <!-- ImageFilesAdapter -->
+    <string name="dialog_rename_title">Rename Image</string>
+    <string name="action_rename">Rename</string>
+    <string name="dialog_delete_image_title">Delete Image</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_file_icon">File icon</string>
+    <string name="cd_more_options">More options</string>
+    <string name="cd_root_warning">Root Warning</string>
+    <string name="cd_create_blank">Create blank image</string>
+    <string name="cd_import_image">Import existing image</string>
+    <string name="cd_format_images">Format image files</string>
+    <string name="cd_add_actions">Add image actions</string>
 
     <!-- Toast messages -->
     <string name="host_success">The device should now show up on your PC</string>
     <string name="host_disable_success">The device should now disappear from your PC</string>
     <string name="host_noroot">Couldn\'t get root access</string>
     <string name="file_picker_denied">Please grant storage permission to select or save files</string>
+
+    <!-- ImageCreator: progress and results -->
+    <string name="create_image_already_exists">File already exists: %1$s</string>
+    <string name="create_image_allocating">Allocating file with fallocate...</string>
+    <string name="create_image_alloc_complete">Fast allocation complete</string>
+    <string name="create_image_dd_progress">Creating image (dd)... %1$d MB / %2$d MB (%3$d%%)</string>
+    <string name="create_image_failed">Failed to create image file: %1$s</string>
+    <string name="create_image_formatting_fs">Formatting filesystem (%1$s)...</string>
+    <string name="create_image_formatted_suffix"> Formatted as %1$s.</string>
+    <string name="create_image_format_warn"> (Warning: mkfs %1$s failed: %2$s).</string>
+    <string name="create_image_complete">Complete!</string>
+    <string name="create_image_success">Successfully created image (%1$s).%2$s</string>
+
+    <!-- Image formatting -->
+    <string name="format_progress_file">Formatting %1$s as %2$s...</string>
+    <string name="format_exit_code">Exit code %1$d</string>
+    <string name="format_exit_code_lower">code %1$d</string>
+    <string name="format_success_file">Successfully formatted %1$s as %2$s</string>
+    <string name="format_failed_file">Failed to format %1$s as %2$s: %3$s</string>
+
+    <!-- Single-image delete and misc -->
+    <string name="snackbar_unmounted_removed">Unmounted and removed %1$s</string>
+    <string name="snackbar_removed">Removed %1$s</string>
+    <string name="file_picker_unnamed">Imported Document</string>
+    <string name="status_lun_value_none">None</string>
+    <string name="file_size_and_path">%1$s • %2$s</string>
+
+    <!-- Overflow menu -->
+    <string name="action_mount_now">Mount Now</string>
+
+    <!-- Single-image delete dialog -->
+    <string name="dialog_delete_active_message">\"%1$s\" is currently active. Deleting it will automatically unmount the USB drive and delete the file. Continue?</string>
+    <string name="dialog_delete_confirm_message">Are you sure you want to delete \"%1$s\"?</string>
+
+    <!-- File size units -->
+    <string name="size_zero">0 B</string>
+    <string name="size_bytes">%1$d B</string>
+    <string name="size_kb">%1$.2f KB</string>
+    <string name="size_mb">%1$.2f MB</string>
+    <string name="size_gb">%1$.2f GB</string>
+
+    <!-- UsbGadgetController: mount / unmount results -->
+    <string name="mount_error_no_root">Root access not available</string>
+    <string name="mount_error_path_missing">Image file path does not exist: %1$s</string>
+    <string name="mount_success_sysfs">Successfully mounted via sys.usb.config (%1$s)</string>
+    <string name="mount_failed_kernel_rejected">Mount failed: LUN appeared but kernel rejected the image path.\n%1$s</string>
+    <string name="mount_error_no_configfs">ConfigFS not found on this device</string>
+    <string name="mount_error_no_udc">USB Device Controller not found (no UDC in /sys/class/udc/ and sys.usb.controller is not set)</string>
+    <string name="mount_success_configfs">Successfully mounted via ConfigFS gadget (UDC: %1$s)</string>
+    <string name="mount_error_lun_binding">Kernel rejected LUN file binding</string>
+    <string name="mount_error_gadget">Failed to mount USB gadget:\n%1$s</string>
+    <string name="unmount_success">Unmounted successfully</string>
+    <string name="unmount_exit_code">Exit code %1$d</string>
+    <string name="unmount_failed">Unmount failed (exit code %1$d): %2$s</string>
 </resources>
